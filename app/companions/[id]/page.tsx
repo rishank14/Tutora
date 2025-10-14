@@ -21,8 +21,8 @@ const CompanionSession = async ({ params }: CompanionSessionPageProps) => {
 
    return (
       <main>
-         <article className="flex rounded-border justify-between p-6 max-md:flex-col">
-            <div className="flex items-center gap-2">
+         <article className="flex rounded-border justify-between p-6 max-md:flex-col max-sm:p-3 max-sm:gap-3">
+            <div className="flex items-center gap-2 max-md:gap-3 max-sm:gap-2">
                <div
                   className="size-[72px] flex items-center justify-center rounded-lg max-md:hidden"
                   style={{ backgroundColor: getSubjectColor(subject) }}
@@ -36,16 +36,21 @@ const CompanionSession = async ({ params }: CompanionSessionPageProps) => {
                </div>
 
                <div className="flex flex-col gap-2">
-                  <div className="flex items-center gap-2">
-                     <p className="font-bold text-2xl">{name}</p>
-                     <div className="subject-badge max-sm:hidden">
+                  <div className="flex items-center gap-2 flex-wrap">
+                     <p className="font-bold text-2xl max-md:text-xl max-sm:text-lg">
+                        {name}
+                     </p>
+                     <div className="subject-badge max-sm:hidden text-sm max-md:text-xs">
                         {subject}
                      </div>
                   </div>
-                  <p className="text-lg">{topic}</p>
+                  <p className="text-lg max-md:text-base max-sm:text-sm">
+                     {topic}
+                  </p>
                </div>
             </div>
-            <div className="items-start text-2xl max-md:hidden">
+
+            <div className="items-start text-2xl max-md:hidden max-sm:text-lg">
                {duration} minutes
             </div>
          </article>

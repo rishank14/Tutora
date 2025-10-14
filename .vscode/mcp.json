@@ -1,0 +1,8 @@
+{
+  "servers": {
+    "Sentry": {
+      "url": "https://mcp.sentry.dev/mcp/rishankk-kalra/javascript-nextjs",
+      "type": "http"
+    }
+  }
+}

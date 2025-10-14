@@ -33,7 +33,7 @@ const SearchInput = () => {
                router.push(newUrl, { scroll: false });
             }
          }
-      }, 500);
+      }, 300);
    }, [searchQuery, router, searchParams, pathname]);
 
    return (

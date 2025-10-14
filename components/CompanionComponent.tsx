@@ -6,12 +6,36 @@ import { vapi } from "@/lib/vapi.sdk";
 import Image from "next/image";
 import Lottie, { LottieRefCurrentProps } from "lottie-react";
 import soundwaves from "@/constants/soundwaves.json";
+import { addToSessionHistory } from "@/lib/actions/companion.actions";
 
 enum CallStatus {
    INACTIVE = "INACTIVE",
    CONNECTING = "CONNECTING",
    ACTIVE = "ACTIVE",
    FINISHED = "FINISHED",
+}
+
+interface CompanionComponentProps {
+   companionId: string;
+   subject: string;
+   topic: string;
+   name: string;
+   userName: string;
+   userImage: string;
+   style: string;
+   voice: string;
+}
+
+interface Message {
+   type: string;
+   transcriptType?: string;
+   role: "assistant" | "user";
+   transcript?: string;
+}
+
+interface SavedMessage {
+   role: "assistant" | "user";
+   content: string;
 }
 
 const CompanionComponent = ({
@@ -33,19 +57,15 @@ const CompanionComponent = ({
 
    const lottieRef = useRef<LottieRefCurrentProps>(null);
 
+   // 🎵 Control Lottie animation based on speaking status
    useEffect(() => {
-      if (lottieRef) {
-         if (isSpeaking) {
-            lottieRef.current?.play();
-         } else {
-            lottieRef.current?.stop();
-         }
-      }
-   }, [isSpeaking, lottieRef]);
+      if (isSpeaking) lottieRef.current?.play();
+      else lottieRef.current?.stop();
+   }, [isSpeaking]);
 
+   // 🎧 Vapi event handling
    useEffect(() => {
       const onCallStart = () => setCallStatus(CallStatus.ACTIVE);
-
       const onCallEnd = () => setCallStatus(CallStatus.FINISHED);
 
       const onMessage = (message: Message) => {
@@ -55,7 +75,7 @@ const CompanionComponent = ({
          ) {
             const newMessage = {
                role: message.role,
-               content: message.transcript,
+               content: message.transcript || "",
             };
             setMessages((prev) => [newMessage, ...prev]);
          }
@@ -63,8 +83,7 @@ const CompanionComponent = ({
 
       const onSpeechStart = () => setIsSpeaking(true);
       const onSpeechEnd = () => setIsSpeaking(false);
-
-      const onError = (error: Error) => console.log("Error", error);
+      const onError = (error: Error) => console.error("Error:", error);
 
       vapi.on("call-start", onCallStart);
       vapi.on("call-end", onCallEnd);
@@ -83,14 +102,17 @@ const CompanionComponent = ({
       };
    }, []);
 
+   // 🎤 Toggle microphone state
    const toggleMicrophone = () => {
-      const isMuted = vapi.isMuted();
-      vapi.setMuted(!isMuted);
-      setIsMuted(!isMuted);
+      const muted = vapi.isMuted();
+      vapi.setMuted(!muted);
+      setIsMuted(!muted);
    };
 
+   // 📞 Start a new session
    const handleCall = async () => {
       setCallStatus(CallStatus.CONNECTING);
+      addToSessionHistory(companionId);
 
       const assistantOverrides = {
          variableValues: { subject, topic, style },
@@ -98,29 +120,33 @@ const CompanionComponent = ({
          serverMessages: [],
       };
 
-      // @ts-expect-error
+      // @ts-expect-error - custom SDK typing
       vapi.start(configureAssistant(voice, style), assistantOverrides);
    };
 
+   // 🔚 End current session
    const handleDisconnect = () => {
       setCallStatus(CallStatus.FINISHED);
       vapi.stop();
    };
 
    return (
-      <section className="flex flex-col h-[70vh]">
-         <section className="flex gap-8 max-sm:flex-col">
-            <div className="companion-section">
+      <section className="flex flex-col min-h-[70vh] max-h-[90vh] h-screen">
+         {/* Avatar + User Section */}
+         <section className="flex flex-col lg:flex-row gap-8">
+            {/* Assistant Avatar */}
+            <div className="companion-section w-full lg:w-2/3">
                <div
                   className="companion-avatar"
                   style={{ backgroundColor: getSubjectColor(subject) }}
                >
+                  {/* Static subject icon */}
                   <div
                      className={cn(
                         "absolute transition-opacity duration-1000",
                         callStatus === CallStatus.FINISHED ||
                            callStatus === CallStatus.INACTIVE
-                           ? "opacity-1001"
+                           ? "opacity-100"
                            : "opacity-0",
                         callStatus === CallStatus.CONNECTING &&
                            "opacity-100 animate-pulse"
@@ -135,6 +161,7 @@ const CompanionComponent = ({
                      />
                   </div>
 
+                  {/* Lottie animation when speaking */}
                   <div
                      className={cn(
                         "absolute transition-opacity duration-1000",
@@ -154,7 +181,8 @@ const CompanionComponent = ({
                <p className="font-bold text-2xl">{name}</p>
             </div>
 
-            <div className="user-section">
+            {/* User Section */}
+            <div className="user-section w-full lg:w-1/3">
                <div className="user-avatar">
                   <Image
                      src={userImage}
@@ -165,6 +193,8 @@ const CompanionComponent = ({
                   />
                   <p className="font-bold text-2xl">{userName}</p>
                </div>
+
+               {/* Microphone Button */}
                <button
                   className="btn-mic"
                   onClick={toggleMicrophone}
@@ -180,6 +210,8 @@ const CompanionComponent = ({
                      {isMuted ? "Turn on microphone" : "Turn off microphone"}
                   </p>
                </button>
+
+               {/* Start / End Session Button */}
                <button
                   className={cn(
                      "rounded-lg py-2 cursor-pointer transition-colors w-full text-white",
@@ -203,13 +235,14 @@ const CompanionComponent = ({
             </div>
          </section>
 
+         {/* Transcript Section */}
          <section className="transcript">
             <div className="transcript-message no-scrollbar">
                {messages.map((message, index) => {
                   if (message.role === "assistant") {
                      return (
                         <p key={index} className="max-sm:text-sm">
-                           {name.split(" ")[0].replace("/[.,]/g, ", "")}:{" "}
+                           {name.split(" ")[0].replace(/[.,]/g, ",")}:{" "}
                            {message.content}
                         </p>
                      );
@@ -222,7 +255,6 @@ const CompanionComponent = ({
                   }
                })}
             </div>
-
             <div className="transcript-fade" />
          </section>
       </section>

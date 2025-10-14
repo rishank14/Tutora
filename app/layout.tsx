@@ -13,10 +13,10 @@ export const metadata: Metadata = {
    title: "Tutora",
    description: "Real-time AI Teaching Platform",
    icons: {
-      icon: "/images/logo.png",
-      apple: "/images/logo.png",
-      shortcut: "/images/logo.png",
-   },
+      icon: "/images/site.png",
+      apple: "/images/site.png",
+      shortcut: "/images/site.png",
+   }
 };
 
 export default function RootLayout({
