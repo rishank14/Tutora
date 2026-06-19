@@ -9,11 +9,11 @@ import SubjectFilter from "@/components/SubjectFilter";
 import { auth } from "@clerk/nextjs/server";
 
 type SearchParams = {
-   searchParams: {
+   searchParams: Promise<{
       subject?: string;
       topic?: string;
-      [key: string]: any;
-   };
+      [key: string]: string | string[] | undefined;
+   }>;
 };
 
 const CompanionsLibrary = async ({ searchParams }: SearchParams) => {
@@ -30,9 +30,9 @@ const CompanionsLibrary = async ({ searchParams }: SearchParams) => {
       : [];
 
    // Add a boolean `bookmarked` property to each companion
-   const companionsWithBookmark = companions.map((c: any) => ({
+   const companionsWithBookmark = companions.map((c: Companion) => ({
       ...c,
-      bookmarked: bookmarkedCompanions.some((b: any) => b.id === c.id),
+      bookmarked: bookmarkedCompanions.some((b: Companion) => b.id === c.id),
    }));
 
    return (
@@ -45,7 +45,7 @@ const CompanionsLibrary = async ({ searchParams }: SearchParams) => {
             </div>
          </section>
          <section className="companions-grid">
-            {companionsWithBookmark.map((companion: any) => (
+            {companionsWithBookmark.map((companion: Companion & { bookmarked: boolean }) => (
                <CompanionCard
                   key={companion.id}
                   {...companion}

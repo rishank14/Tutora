@@ -21,9 +21,9 @@ const Page = async () => {
       : [];
 
    // Add bookmarked boolean to popular companions
-   const popularWithBookmark = companions.map((c: any) => ({
+   const popularWithBookmark = companions.map((c: Companion) => ({
       ...c,
-      bookmarked: bookmarkedCompanions.some((b: any) => b.id === c.id),
+      bookmarked: bookmarkedCompanions.some((b: Companion) => b.id === c.id),
    }));
 
    return (
@@ -31,7 +31,7 @@ const Page = async () => {
          <h1>Popular Companions</h1>
 
          <section className="home-section">
-            {popularWithBookmark.map((companion: any) => (
+            {popularWithBookmark.map((companion: Companion & { bookmarked: boolean }) => (
                <CompanionCard
                   key={companion.id}
                   {...companion}

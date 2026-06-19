@@ -37,6 +37,7 @@ const formSchema = z.object({
 const CompanionForm = () => {
    type CompanionFormValues = z.infer<typeof formSchema>;
    const form = useForm<CompanionFormValues>({
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       resolver: zodResolver(formSchema) as any,
       defaultValues: {
          name: "",
