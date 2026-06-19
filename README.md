@@ -11,7 +11,6 @@ Tutora is a state-of-the-art, real-time AI-powered voice tutoring platform. It e
 
 ## 📌 Table of Contents
 
-- [🏗️ System Architecture](#-system-architecture)
 - [🌟 Core Features](#-core-features)
 - [🛠️ Tech Stack & Dependencies](#-tech-stack--dependencies)
 - [🗄️ Database Setup (Supabase)](#-database-setup-supabase)
@@ -20,36 +19,6 @@ Tutora is a state-of-the-art, real-time AI-powered voice tutoring platform. It e
 - [📂 Directory Structure](#-directory-structure)
 - [License](#license)
 - [Author](#author)
-
----
-
-## 🏗️ System Architecture
-
-Tutora relies on a modern, decoupled architecture connecting client-side audio streaming, Next.js server actions, secure authentication, and high-performance AI engines.
-
-```mermaid
-graph TD
-    User([Student/User]) <-->|WebRTC Voice & Audio| Client[Client Browser (Vapi Web SDK)]
-    Client <-->|Next.js Server Actions & App Router| Backend[Next.js Server]
-    
-    subgraph Authentication & Protection
-        Clerk[Clerk Auth & Roles Provider]
-        Backend -->|Session Verification & Plan Validation| Clerk
-    end
-    
-    subgraph Data & Storage
-        Supabase[(Supabase Database & RLS)]
-        Backend -->|Clerk JWT-Authenticated DB Client| Supabase
-    end
-    
-    subgraph AI Voice Gateway
-        Vapi[Vapi AI Gateway]
-        Client <-->|Audio Stream| Vapi
-        Vapi -->|Speech-to-Text (STT)| Deepgram[Deepgram transcriber (nova-3)]
-        Vapi -->|Conversational Brain| OpenAI[OpenAI GPT-4 LLM]
-        Vapi -->|Text-to-Speech (TTS)| ElevenLabs[ElevenLabs custom voice IDs]
-    end
-```
 
 ---
 
