@@ -11,7 +11,7 @@ Tutora is a state-of-the-art, real-time AI-powered voice tutoring platform. It e
 
 ## 📌 Table of Contents
 
-- [🏗️ System Architecture](#️-system-architecture)
+- [🏗️ System Architecture](#-system-architecture)
 - [🌟 Core Features](#-core-features)
 - [🛠️ Tech Stack & Dependencies](#-tech-stack--dependencies)
 - [🗄️ Database Setup (Supabase)](#-database-setup-supabase)
@@ -65,7 +65,7 @@ graph TD
   - **Topic details**: Define exactly what the companion should guide them through (e.g. *Derivatives & Integrals*, *World Wars*).
   - **Voice & Tone Style**: Toggle between `Male` or `Female` voice engines, and `Casual` or `Formal` speaking styles.
   - **Session Duration**: Define targeted minutes for the lesson.
-- **📌 Journey Dashboard & bookmarks**: A profile space listing user stats (completed lessons, built companions) and interactive accordions tracking:
+- **📌 Journey Dashboard & Bookmarks**: A profile space listing user stats (completed lessons, built companions) and interactive accordions tracking:
   - **Bookmarked Companions** (with add/remove triggers using Next.js cache revalidation).
   - **Recent Sessions History** (updated in real-time on session start).
   - **My Companions** (a history of custom-built tutors).
